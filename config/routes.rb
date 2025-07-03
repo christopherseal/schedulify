@@ -4,9 +4,11 @@ Rails.application.routes.draw do
       post "signup", to: "auth#signup"
       post "login", to: "auth#login"
 
-      resources :users do
+      resources :users, only: [ :index ] do
         resources :shifts, only: [ :index ]
       end
+
+    resources :shift_trades, only: [ :index, :create, :update ]
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

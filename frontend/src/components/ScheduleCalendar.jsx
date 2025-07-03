@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import TradeModal from './TradeModal';
 import axios from 'axios';
 
 const ScheduleCalendar = ({ userId }) => {
   const [shifts, setShifts] = useState([]);
   const [selectedShift, setSelectedShift] = useState(null);
+  const [tradeShift, setTradeShift] = useState(null);
 
   const fetchShifts = async (startStr, endStr) => {
     try {
@@ -52,7 +54,8 @@ const ScheduleCalendar = ({ userId }) => {
       />
 
       {selectedShift && (
-        <div className="modal">
+      <div className="modal-overlay" onClick={() => setSelectedShift(null)}>
+        <div className="modal" onClick={(e) => e.stopPropagation()}>
           <h3>{selectedShift.title}</h3>
           <p>{selectedShift.extendedProps.details}</p>
           <p>
@@ -60,8 +63,20 @@ const ScheduleCalendar = ({ userId }) => {
             To: {new Date(selectedShift.end).toLocaleString()}
           </p>
           <button onClick={() => setSelectedShift(null)}>Close</button>
+          <button onClick={() => {
+            setTradeShift(selectedShift);
+            setSelectedShift(null); // close modal
+          }}>Propose Trade</button>
         </div>
-      )}
+      </div>
+    )}
+
+    {tradeShift && (
+      <TradeModal
+        shift={tradeShift}
+        onClose={() => setTradeShift(null)}
+      />
+    )}
     </div>
   );
 };
